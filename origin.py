@@ -16,56 +16,19 @@ label0 = Label(mf, textvariable = stacklist)
 label0.grid(row = 0, columnspan = 3)
 label1 = Label(mf, textvariable = argument, background = "white")
 label1.grid(row = 0, column = 3)
-stack, command, num = [], '', ''
+stack, num = [], ''
 
-# The functions for "constructing" the number that is to be added to the stack.
-def construct0():
+    
+def construct_number(symbol:int):
     global num, argument
-    if num == '0':
-        tkinter.messagebox.showinfo("The error", "Can't begin with a zero.")
+    symbol = str(symbol)
+    if num == '0' and symbol == '0':
+        tkinter.messagebox.showinfo("The error", "Can't begin with a zero.") 
     else:
-        num += '0'
+        num += symbol
         argument.set(num)
-def construct1():
-    global num, argument
-    num += '1'
-    argument.set(num)
-def construct2():
-    global num, argument
-    num += '2'
-    argument.set(num)
-def construct3():
-    global num, argument
-    num += '3'
-    argument.set(num)
-def construct4():
-    global num, argument
-    num += '4'
-    argument.set(num)
-def construct5():
-    global num, argument
-    num += '5'
-    argument.set(num)
-def construct6():
-    global num, argument
-    num += '6'
-    argument.set(num)
-def construct7():
-    global num, argument
-    if num == '0':
-        tkinter.messagebox.showinfo("The error", "Can't begin with a zero.")
-    else:
-        num += '7'
-        argument.set(num)
-def construct8():
-    global num, argument
-    num += '8'
-    argument.set(num)
-def construct9():
-    global num, argument
-    num += '9'
-    argument.set(num)
-def constructd(): # The dot.
+
+def construct_dot(): # The dot.
     global num, argument
     if '.' in num:
         tkinter.messagebox.showinfo("The error", "A dot is used already.")
@@ -75,13 +38,14 @@ def constructd(): # The dot.
     else:
         num += '.'
         argument.set(num)
-def constructm(): # The minus.
+def construct_minus(): # The minus.
     global num, argument
     if num == '':
         num += '-'
         argument.set(num)
     else:
         tkinter.messagebox.showinfo("The error", "A minus can be put only in the beginning.")
+        
 def goback(): # The "backspace".
     global num, argument
     if num == '':
@@ -99,6 +63,7 @@ def delfromstack(): # Deleting elements from the stack.
             stacklist.set('')
         else:
             stacklist.set(', '.join([str(x) for x in stack]))
+
 def push(): # Pushing on the stack.
     global num, stacklist, argument
     if float(num) % 1 == 0.0:
@@ -108,55 +73,38 @@ def push(): # Pushing on the stack.
     stacklist.set(', '.join([str(x) for x in stack]))
     argument.set('')
     num = ''
+
+
 def factorial(number):
     if number == 0:
         return 1
     else:
         return number * factorial(number - 1)
-def performa(): # Addition.
+    
+def perform_operation(symbol:str):
     global stack
     if len(stack) < 2:
         tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
     else:
-        stack[-2] = stack[-2] + stack[-1]
+        match symbol:
+            case '+':
+                stack[-2] = stack[-2] + stack[-1]
+            case '-':
+                stack[-2] = stack[-2] - stack[-1]
+            case '*':
+                stack[-2] = stack[-2] * stack[-1]
+            case '/':
+                if stack[-1] == 0:
+                    tkinter.messagebox.showinfo("The error", "The divisior is 0, can't perform the division.")
+                else:
+                    stack[-2] = int((stack[-2] / stack[-1]) * 1000000 + 0.5) / 1000000.0
+        # stack[-2] = stack[-2] + stack[-1]
         del stack[-1]
         if stack[-1] % 1 == 0.0:
             stack[-1] = int(stack[-1])
         stacklist.set(', '.join([str(x) for x in stack]))
-def performs(): # Substraction.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
-    else:
-        stack[-2] = stack[-2] - stack[-1]
-        del stack[-1]
-        if stack[-1] % 1 == 0.0:
-            stack[-1] = int(stack[-1])
-        stacklist.set(', '.join([str(x) for x in stack]))
-def performm(): # Multiplication.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
-    else:
-        stack[-2] = stack[-2] * stack[-1]
-        del stack[-1]
-        if stack[-1] % 1 == 0.0:
-            stack[-1] = int(stack[-1])
-        stacklist.set(', '.join([str(x) for x in stack]))
-def performd(): # Division.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack ais required.")
-    else:
-        if stack[-1] == 0:
-            tkinter.messagebox.showinfo("The error", "The divisior is 0, can't perform the division.")
-        else:
-            stack[-2] = int((stack[-2] / stack[-1]) * 1000000 + 0.5) / 1000000.0
-            del stack[-1]
-            if stack[-1] % 1 == 0.0:
-                stack[-1] = int(stack[-1])
-            stacklist.set(', '.join([str(x) for x in stack]))
-def performf(): # Factorial.
+        
+def perform_factorial(): # Factorial.
     global stack
     if len(stack) < 1:
         tkinter.messagebox.showinfo("The error", "At least 1 element in the stack is required.")
@@ -169,75 +117,50 @@ def performf(): # Factorial.
     else:
         stack[-1] = factorial(stack[-1])
         stacklist.set(', '.join([str(x) for x in stack]))
-def performp(): # The power.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
-    else:
-        stack[-2] = stack[-2] ** stack[-1]
-        del stack[-1]
-        stacklist.set(', '.join([str(x) for x in stack]))
-def performr(): # The root.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
-    else:
-        stack[-2] = stack[-2] ** stack[-1]
-        del stack[-1]
-        stacklist.set(', '.join([str(x) for x in stack]))
-def performmd(): # The modulo.
-    global stack
-    if len(stack) < 2:
-        tkinter.messagebox.showinfo("The error", "At least 2 elements in the stack are required.")
-    elif stack[-1] >= 0:
-        stack[-2] = stack[-2] % stack[-1]
-        del stack[-1]
-        stacklist.set(', '.join([str(x) for x in stack]))
-    else:
-        stack[-1] = -stack[-1]
-        stack[-2] = stack[-2] % stack[-1]
-        del stack[-1]
-        stacklist.set(', '.join([str(x) for x in stack]))
+
+
+
+def create_button(text: str, command):
+    return Button(mf, text = text, command = command, width = 5, height = 2)
+
+def create_number_buttons():
+    for i in range(9, -1, -3):
+        for j in range(2, -1, -1):
+            number = i-j
+            column = (number-1) % 3
+            row = 5-i//3
+            if number == -2:
+                number = 0
+            button = create_button(str(number), lambda x=number: construct_number(x))
+            button.grid(column=column, row=row)
+        
+
 
 # Drawing the grid.
-bt0 = Button(mf, text = "7", command = construct7, width = 5, height = 2)
-bt1 = Button(mf, text = "8", command = construct8, width = 5, height = 2)
-bt2 = Button(mf, text = "9", command = construct9, width = 5, height = 2)
-bt3 = Button(mf, text = "+", command = performa, width = 5, height = 2)
-bt4 = Button(mf, text = "4", command = construct4, width = 5, height = 2)
-bt5 = Button(mf, text = "5", command = construct5, width = 5, height = 2)
-bt6 = Button(mf, text = "6", command = construct6, width = 5, height = 2)
-bt7 = Button(mf, text = "-", command = performs, width = 5, height = 2)
-bt8 = Button(mf, text = "1", command = construct1, width = 5, height = 2)
-bt9 = Button(mf, text = "2", command = construct2, width = 5, height = 2)
-bt10 = Button(mf, text = "3", command = construct3, width = 5, height = 2)
-bt11 = Button(mf, text = "*", command = performm, width = 5, height = 2)
-bt12 = Button(mf, text = "0", command = construct0, width = 5, height = 2)
-bt13 = Button(mf, text = ".", command = constructd, width = 5, height = 2)
-bt14 = Button(mf, text = "!", command = performf, width = 5, height = 2)
-bt15 = Button(mf, text = "/", command = performd, width = 5, height = 2)
-bt16 = Button(mf, text = "Push!", command = push, width = 5, height = 2)
-bt17 = Button(mf, text = "neg", command = constructm, width = 5, height = 2)
-bt18 = Button(mf, text = "<-", command = goback, width = 5, height = 2)
-bt19 = Button(mf, text = "<- (st)", command = delfromstack, width = 5, height = 2)
-bt0.grid(column = 0, row = 2)
-bt1.grid(column = 1, row = 2)
-bt2.grid(column = 2, row = 2)
-bt3.grid(column = 3, row = 2)
-bt4.grid(column = 0, row = 3)
-bt5.grid(column = 1, row = 3)
-bt6.grid(column = 2, row = 3)
-bt7.grid(column = 3, row = 3)
-bt8.grid(column = 0, row = 4)
-bt9.grid(column = 1, row = 4)
-bt10.grid(column = 2, row = 4)
-bt11.grid(column = 3, row = 4)
-bt12.grid(column = 0, row = 5)
-bt13.grid(column = 1, row = 5)
-bt14.grid(column = 2, row = 5)
-bt15.grid(column = 3, row = 5)
-bt16.grid(column = 3, row = 1)
-bt17.grid(column = 2, row = 1)
-bt18.grid(column = 1, row = 1)
-bt19.grid(column = 0, row = 1)
+
+create_number_buttons()
+
+bt_plus = create_button('+', lambda x = '+': perform_operation(x))
+bt_minus = create_button('-', lambda x = '-': perform_operation(x))
+bt_multiplicate = create_button('*', lambda x = '*': perform_operation(x))
+bt_divide = create_button('/', lambda x = '/': perform_operation(x))
+
+bt_dot = create_button('.', construct_dot)
+bt_factorial = create_button('!', perform_factorial)
+bt_push = create_button('Push!', push)
+bt_negative = create_button('neg', construct_minus)
+bt_backspace = create_button('<-', goback)
+bt_delete = create_button('<- (st)', delfromstack)
+
+bt_plus.grid(column = 3, row = 2)
+bt_minus.grid(column = 3, row = 3)
+bt_multiplicate.grid(column = 3, row = 4)
+bt_divide.grid(column = 3, row = 5)
+
+bt_dot.grid(column = 1, row = 5)
+bt_factorial.grid(column = 2, row = 5)
+bt_push.grid(column = 3, row = 1)
+bt_negative.grid(column = 2, row = 1)
+bt_backspace.grid(column = 1, row = 1)
+bt_delete.grid(column = 0, row = 1)
 rt.mainloop() # The main loop of the application in order to make it more IDLE-friendly.
